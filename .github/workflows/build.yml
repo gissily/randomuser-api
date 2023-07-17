@@ -18,7 +18,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: 'maven'
-          server-id: ossrh
+          server-id: OSSRH
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Install gpg
@@ -26,7 +26,7 @@ jobs:
           apt-get update && apt-get install -y gnupg2
           export GPG_TTY=$(tty)
           echo "${{ secrets.GPG_PRI }}" | gpg --batch --import
-      - name: Testing && Publish to the Maven Central Repository
+      - name: Testing && Publishing SNAPSHOT
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
