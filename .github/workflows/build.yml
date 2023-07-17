@@ -7,7 +7,7 @@ on:
       - '*'
 
 jobs:
-  push-and-build:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,6 +31,6 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         run: |
-          ./mvnw clean deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+          ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
       
     
