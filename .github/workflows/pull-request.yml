@@ -1,0 +1,20 @@
+name: Test for Pull Request
+on: [pull_request]
+
+jobs:
+  pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: 'maven'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Testing
+        run: |
+          ./mvnw clean test
+

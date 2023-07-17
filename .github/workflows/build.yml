@@ -1,0 +1,36 @@
+name: Build
+on:
+  push:
+    branches:
+      - "*"
+    tags-ignore:
+      - '*'
+
+jobs:
+  push-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: 'maven'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+      - name: Install gpg
+        run: |
+          apt-get update && apt-get install -y gnupg2
+          export GPG_TTY=$(tty)
+          echo "${{ secrets.GPG_PRI }}" | gpg --batch --import
+      - name: Testing && Publish to the Maven Central Repository
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        run: |
+          ./mvnw clean deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+      
+    
