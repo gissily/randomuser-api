@@ -30,7 +30,7 @@ jobs:
           apt-get update && apt-get install -y gnupg2
           export GPG_TTY=$(tty)
           echo "${{ secrets.GPG_PRI }}" | gpg --batch --import
-      - name: Testing && Publishing SNAPSHOT
+      - name: Testing && Publishing RELEASE
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
@@ -38,3 +38,5 @@ jobs:
           ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
       - name: Release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
