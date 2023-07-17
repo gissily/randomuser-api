@@ -20,7 +20,6 @@ jobs:
           server-id: OSSRH
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Prepare
         run: |
           SNAPSHOT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version | grep "^[^\\[]" |grep -v Download |grep -v Progress)
@@ -37,3 +36,5 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
         run: |
           ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+      - name: Release
+        uses: softprops/action-gh-release@v1

@@ -6,10 +6,8 @@
 
 	<groupId>xyz.opcal.tools</groupId>
 	<artifactId>randomuser-api</artifactId>
-	<version>1.4.1-SNAPSHOT</version>
-	<modules>
-		<module>core</module>
-	</modules>
+	<version>1.4.0-SNAPSHOT</version>
+
 	<packaging>pom</packaging>
 
 	<name>randomuser-api</name>
@@ -386,4 +384,9 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<modules>
+		<module>core</module>
+	</modules>
+
 </project>

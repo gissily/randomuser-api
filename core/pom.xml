@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>randomuser-api</artifactId>
 		<groupId>xyz.opcal.tools</groupId>
-		<version>1.4.1-SNAPSHOT</version>
+		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 

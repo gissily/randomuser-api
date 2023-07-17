@@ -16,7 +16,6 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: 'maven'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Perpare
         run: |
           sudo apt update && sudo apt install -y bc
