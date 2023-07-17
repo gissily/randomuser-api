@@ -25,7 +25,6 @@
 		<javadoc.failOnError>false</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
 
-		<spring-boot.version>2.7.13</spring-boot.version>
 		<feign.version>12.4</feign.version>
 		<commons-lang3.version>3.12.0</commons-lang3.version>
 		<junit-jupiter.version>5.8.2</junit-jupiter.version>
