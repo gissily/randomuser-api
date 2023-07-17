@@ -23,6 +23,10 @@ public class RandomuserClient {
 		this(DEFAULT_API_URL, createFeignBuilder());
 	}
 
+	public RandomuserClient(String apiUrl) {
+		this(apiUrl, createFeignBuilder());
+	}
+
 	public RandomuserClient(String apiUrl, Feign.Builder feignBuilder) {
 		this.apiUrl = apiUrl;
 		this.feignBuilder = feignBuilder;
