@@ -1,0 +1,39 @@
+name: Package Build and Release
+
+on:
+  push:
+    tags:
+      - "*.release"
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: 'maven'
+          server-id: OSSRH
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prepare
+        run: |
+          SNAPSHOT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version | grep "^[^\\[]" |grep -v Download |grep -v Progress)
+          RELEASE_VERSION=${SNAPSHOT_VERSION/-SNAPSHOT/}
+          ./mvnw versions:set -DnewVersion=${RELEASE_VERSION}
+      - name: Install gpg
+        run: |
+          apt-get update && apt-get install -y gnupg2
+          export GPG_TTY=$(tty)
+          echo "${{ secrets.GPG_PRI }}" | gpg --batch --import
+      - name: Testing && Publishing SNAPSHOT
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        run: |
+          ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
