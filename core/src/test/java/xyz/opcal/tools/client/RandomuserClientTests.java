@@ -44,7 +44,7 @@ class RandomuserClientTests {
 
 	static RandomuserClient testClient() {
 		return new RandomuserClient(RandomuserClient.DEFAULT_API_URL,
-				RandomuserClient.createFeignBuilder().logger(new Slf4jLogger()).logLevel(Logger.Level.FULL));
+				RandomuserClient.defaultFeignBuilder().logger(new Slf4jLogger()).logLevel(Logger.Level.FULL));
 	}
 
 	@Test

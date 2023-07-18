@@ -15,16 +15,18 @@ public class RandomuserClient {
 	private final Feign.Builder feignBuilder;
 	private final RandomuserApi randomuserApi;
 
-	static Feign.Builder createFeignBuilder() {
-		return Feign.builder().encoder(new JacksonEncoder()).decoder(new JacksonDecoder());
+	public static Feign.Builder defaultFeignBuilder() {
+		return Feign.builder()
+				.encoder(new JacksonEncoder())
+				.decoder(new JacksonDecoder());
 	}
 
 	public RandomuserClient() {
-		this(DEFAULT_API_URL, createFeignBuilder());
+		this(DEFAULT_API_URL, defaultFeignBuilder());
 	}
 
 	public RandomuserClient(String apiUrl) {
-		this(apiUrl, createFeignBuilder());
+		this(apiUrl, defaultFeignBuilder());
 	}
 
 	public RandomuserClient(String apiUrl, Feign.Builder feignBuilder) {
