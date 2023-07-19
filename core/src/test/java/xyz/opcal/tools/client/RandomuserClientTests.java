@@ -42,6 +42,19 @@ class RandomuserClientTests {
 		assertNotNull(user.getRegistered());
 	}
 
+	@Test
+	@Order(1)
+	void randomCustomUrl() {
+		RandomuserClient randomuserClient = new RandomuserClient(System.getProperty("CUSTOMER_RUSER_API_URL", RandomuserClient.DEFAULT_API_URL));
+		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().build());
+		assertNotNull(response);
+		assertNull(response.getError());
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertFalse(response.getResults().isEmpty());
+		User user = response.getResults().get(0);
+		assertNotNull(user);
+	}
+
 	static RandomuserClient testClient() {
 		return new RandomuserClient(RandomuserClient.DEFAULT_API_URL,
 				RandomuserClient.defaultFeignBuilder().logger(new Slf4jLogger()).logLevel(Logger.Level.FULL));

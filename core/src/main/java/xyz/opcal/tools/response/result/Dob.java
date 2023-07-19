@@ -19,7 +19,7 @@ package xyz.opcal.tools.response.result;
 import lombok.Data;
 
 /**
- * POJO base on "https://randomuser.me/documentation#results"
+ * Object base on "https://randomuser.me/documentation#results"
  */
 @Data
 public class Dob {

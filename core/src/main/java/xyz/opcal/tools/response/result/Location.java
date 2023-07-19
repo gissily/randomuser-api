@@ -16,28 +16,19 @@
 
 package xyz.opcal.tools.response.result;
 
-import java.util.Map;
-
 import lombok.Data;
 
 /**
- * POJO base on "https://randomuser.me/documentation#results"
+ * Object base on "https://randomuser.me/documentation#results"
  */
 @Data
 public class Location {
 
-	public static final String COORDINATES_LATITUDE = "latitude";
-	public static final String COORDINATES_LONGITUDE = "longitude";
-	public static final String TIMEZONE_OFFSET = "offset";
-	public static final String TIMEZONE_DESCRIPTION = "description";
-	public static final String STREET_NUMBER = "number";
-	public static final String STREET_NAME = "name";
-
-	private Map<String, String> street;
+	private Street street;
 	private String city;
 	private String state;
 	private String postcode;
-	private Map<String, String> coordinates;
-	private Map<String, String> timezone;
+	private Coordinates coordinates;
+	private Timezone timezone;
 
 }
