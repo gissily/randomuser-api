@@ -2,6 +2,8 @@ package xyz.opcal.tools.client;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import feign.Logger;
 import feign.slf4j.Slf4jLogger;
+import xyz.opcal.tools.request.ApiVersion;
 import xyz.opcal.tools.request.RandomuserRequest;
 import xyz.opcal.tools.request.param.Gender;
 import xyz.opcal.tools.request.param.Nationalities;
@@ -22,6 +25,11 @@ import xyz.opcal.tools.response.result.User;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RandomuserClientTests {
+
+	static RandomuserClient testClient() {
+		return new RandomuserClient(System.getProperty("CUSTOMER_RUSER_API_URL", RandomuserClient.DEFAULT_API_URL),
+				RandomuserClient.defaultFeignBuilder().logger(new Slf4jLogger()).logLevel(Logger.Level.FULL));
+	}
 
 	@Test
 	@Order(1)
@@ -44,7 +52,7 @@ class RandomuserClientTests {
 
 	@Test
 	@Order(1)
-	void randomCustomUrl() {
+	void randomOneWithCustomUrl() {
 		RandomuserClient randomuserClient = new RandomuserClient(System.getProperty("CUSTOMER_RUSER_API_URL", RandomuserClient.DEFAULT_API_URL));
 		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().build());
 		assertNotNull(response);
@@ -55,16 +63,10 @@ class RandomuserClientTests {
 		assertNotNull(user);
 	}
 
-	static RandomuserClient testClient() {
-		return new RandomuserClient(RandomuserClient.DEFAULT_API_URL,
-				RandomuserClient.defaultFeignBuilder().logger(new Slf4jLogger()).logLevel(Logger.Level.FULL));
-	}
-
 	@Test
 	@Order(2)
 	void randomGender() {
-		RandomuserClient randomuserClient = testClient();
-		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().gender(Gender.FEMALE).build());
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().gender(Gender.FEMALE).build());
 		assertNotNull(response);
 		assertTrue(Objects.nonNull(response.getResults()));
 		assertFalse(response.getResults().isEmpty());
@@ -76,8 +78,7 @@ class RandomuserClientTests {
 	@Test
 	@Order(3)
 	void randomNation() {
-		RandomuserClient randomuserClient = testClient();
-		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().nationalities(new Nationalities[] { Nationalities.US }).build());
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().nationalities(new Nationalities[] { Nationalities.US }).build());
 		assertNotNull(response);
 		assertTrue(Objects.nonNull(response.getResults()));
 		assertFalse(response.getResults().isEmpty());
@@ -89,12 +90,11 @@ class RandomuserClientTests {
 	@Test
 	@Order(4)
 	void randomPage() {
-		RandomuserClient randomuserClient = testClient();
 		String seed = "sead123";
 		int page = 1;
 		int results = 10;
 
-		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().seed(seed).page(page).results(results).build());
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().seed(seed).page(page).results(results).build());
 		assertNotNull(response);
 		assertNotNull(response.getInfo());
 		assertEquals(seed, response.getInfo().getSeed());
@@ -107,9 +107,7 @@ class RandomuserClientTests {
 	@Test
 	@Order(5)
 	void randomInc() {
-		RandomuserClient randomuserClient = testClient();
-
-		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().inc("gender,name,nat").build());
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().inc("gender,name,nat").build());
 		assertNotNull(response);
 
 		assertTrue(Objects.nonNull(response.getResults()));
@@ -126,9 +124,7 @@ class RandomuserClientTests {
 	@Test
 	@Order(6)
 	void randomExc() {
-		RandomuserClient randomuserClient = testClient();
-
-		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().exc("login").build());
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().exc("login").build());
 		assertNotNull(response);
 
 		assertTrue(Objects.nonNull(response.getResults()));
@@ -144,10 +140,9 @@ class RandomuserClientTests {
 	@Test
 	@Order(7)
 	void randomPassword() {
-		RandomuserClient randomuserClient = testClient();
 		int min = 10;
 		int max = 20;
-		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder()
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder()
 				.password(PasswordSpec.builder()
 						.charsets(new PasswordCharsets[] { PasswordCharsets.LOWER, PasswordCharsets.UPPER, PasswordCharsets.SPECIAL, PasswordCharsets.NUMBER })
 						.min(min).max(max).build())
@@ -168,11 +163,10 @@ class RandomuserClientTests {
 	@Test
 	@Order(8)
 	void randomFullParams() {
-		RandomuserClient randomuserClient = testClient();
 		int page = 2;
 		int results = 10;
 
-		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().page(page).results(results).gender(Gender.MALE)
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().page(page).results(results).gender(Gender.MALE)
 				.password(PasswordSpec.builder().charsets(new PasswordCharsets[] { PasswordCharsets.LOWER, PasswordCharsets.NUMBER }).build())
 				.nationalities(new Nationalities[] { Nationalities.AU }).build());
 		assertNotNull(response);
@@ -183,5 +177,27 @@ class RandomuserClientTests {
 		assertEquals(results, response.getResults().size());
 		assertTrue(response.getResults().stream().allMatch(user -> StringUtils.equalsIgnoreCase(Gender.MALE.name(), user.getGender())));
 		assertTrue(response.getResults().stream().allMatch(user -> StringUtils.equalsIgnoreCase(Nationalities.AU.name(), user.getNat())));
+	}
+
+	@Test
+	@Order(9)
+	void randomApiVersion() {
+		Map<String, Object> response = testClient().random(ApiVersion.V1_1, RandomuserRequest.builder().build());
+		assertNotNull(response);
+		assertNotNull(response.get("results"));
+
+	}
+
+	@Test
+	@Order(9)
+	void randomApiVersionWithCustomQuery() {
+
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("gender", Gender.MALE.name().toLowerCase());
+
+		Map<String, Object> response = testClient().random(ApiVersion.V1_1, queryMap);
+		assertNotNull(response);
+		assertNotNull(response.get("results"));
+
 	}
 }
