@@ -14,6 +14,8 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Testing
+        env:
+          CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
         run: |
           ./mvnw clean test
 

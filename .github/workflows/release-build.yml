@@ -34,6 +34,7 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
         run: |
           ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
       - name: Release
