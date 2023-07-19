@@ -27,8 +27,8 @@ import xyz.opcal.tools.response.result.User;
 class RandomuserClientTests {
 
 	static RandomuserClient testClient() {
-		return new RandomuserClient(System.getProperty("CUSTOMER_RUSER_API_URL", RandomuserClient.DEFAULT_API_URL),
-				RandomuserClient.defaultFeignBuilder().logger(new Slf4jLogger()).logLevel(Logger.Level.FULL));
+		String apiUrl = Objects.isNull(System.getenv("CUSTOMER_RUSER_API_URL")) ? RandomuserClient.DEFAULT_API_URL : System.getenv("CUSTOMER_RUSER_API_URL");
+		return new RandomuserClient(apiUrl, RandomuserClient.defaultFeignBuilder().logger(new Slf4jLogger()).logLevel(Logger.Level.FULL));
 	}
 
 	@Test
