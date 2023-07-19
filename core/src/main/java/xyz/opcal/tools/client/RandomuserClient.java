@@ -19,7 +19,11 @@ public class RandomuserClient {
 	private final RandomuserApi randomuserApi;
 
 	public static Feign.Builder defaultFeignBuilder() {
-		return Feign.builder().encoder(new JacksonEncoder()).decoder(new JacksonDecoder());
+		// @formatter:off
+		return Feign.builder()
+				.encoder(new JacksonEncoder())
+				.decoder(new JacksonDecoder());
+		// @formatter:on
 	}
 
 	public RandomuserClient() {
