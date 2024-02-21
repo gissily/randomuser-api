@@ -10,3 +10,5 @@ updates:
     ignore:
       - dependency-name: "ch.qos.logback:logback-classic"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "ch.qos.logback:logback-core"
+        update-types: [ "version-update:semver-major" ]
