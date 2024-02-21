@@ -13,9 +13,15 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: 'maven'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          server-id: OSSRH
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
       - name: Testing
         env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
         run: |
-          ./mvnw clean test
+          ./mvnw clean --batch-mode test
 
