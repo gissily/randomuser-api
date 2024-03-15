@@ -16,16 +16,11 @@ jobs:
           server-id: OSSRH
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-      - name: Install gpg
-        run: |
-          sudo apt update && sudo apt install -y gnupg2
-          export GPG_TTY=$(tty)
-          echo "${{ secrets.GPG_PRI }}" | gpg --batch --import
       - name: Testing
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
         run: |
-          ./mvnw clean --batch-mode test -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+          ./mvnw clean test
 
