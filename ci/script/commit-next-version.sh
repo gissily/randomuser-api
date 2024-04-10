@@ -15,7 +15,7 @@ TAG_NAME=${RELEASE_VERSION}.release
 "${ROOT_PATH}"/mvnw flatten:clean
 
 git add .
-git commit -m "Release ${RELEASE_VERSION}"
+git commit -m "Release ${RELEASE_VERSION} [skip ci]"
 git push
 
 git tag -a "${TAG_NAME}" -m "Release Tag ${RELEASE_VERSION}"
