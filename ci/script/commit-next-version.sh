@@ -15,7 +15,10 @@ TAG_NAME=${RELEASE_VERSION}.release
 "${ROOT_PATH}"/mvnw flatten:clean
 
 git add .
-git commit -m "Release ${RELEASE_VERSION} [skip ci]"
+git commit -m "Bump Release [${RELEASE_VERSION}]"
+## github dose not support skip ci by 'git push option'
+## if using '[skip ci]' in commit message, the tag build will skip too
+## now using 'if' condition in github action to skip ci, if message contains "Bump Release ["
 git push
 
 git tag -a "${TAG_NAME}" -m "Release Tag ${RELEASE_VERSION}"
