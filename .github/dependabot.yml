@@ -6,7 +6,7 @@ updates:
       interval: "weekly"
       day: "thursday"
       time: "12:00"
-    open-pull-requests-limit: 10
+#    open-pull-requests-limit: 10
     ignore:
       - dependency-name: "ch.qos.logback:logback-classic"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
