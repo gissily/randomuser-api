@@ -12,5 +12,5 @@ VERSION=$1
 echo "${VERSION}"
 "${ROOT_PATH}"/mvnw -U clean compile >> /dev/null 2>&1
 
-"${ROOT_PATH}"/mvnw versions:set-property -Dproperty=revision -DnewVersion="${VERSION}" >> /dev/null 2>&1
+"${ROOT_PATH}"/mvnw versions:set-property -Dproperty=project.version -DnewVersion="${VERSION}" >> /dev/null 2>&1
 "${ROOT_PATH}"/mvnw versions:commit
