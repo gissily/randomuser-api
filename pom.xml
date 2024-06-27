@@ -25,7 +25,7 @@
 		<javadoc.failOnError>false</javadoc.failOnError>
 		<javadoc.failOnWarnings>false</javadoc.failOnWarnings>
 
-		<feign.version>13.2.1</feign.version>
+		<feign.version>13.3</feign.version>
 		<commons-lang3.version>3.14.0</commons-lang3.version>
 		<junit-jupiter.version>5.10.2</junit-jupiter.version>
 		<lombok.version>1.18.32</lombok.version>
