@@ -12,3 +12,5 @@ updates:
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "ch.qos.logback:logback-core"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "org.junit:junit-bom"
+        update-types: ["version-update:semver-major"]
