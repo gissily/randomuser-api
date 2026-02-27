@@ -34,7 +34,8 @@ class RandomuserClientTests {
 	@Test
 	@Order(1)
 	void randomOne() {
-		RandomuserClient randomuserClient = new RandomuserClient();
+//		RandomuserClient randomuserClient = new RandomuserClient(); // homepage issues
+		RandomuserClient randomuserClient = testClient();
 		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().build());
 		assertNotNull(response);
 		assertNull(response.getError());
@@ -53,7 +54,7 @@ class RandomuserClientTests {
 	@Test
 	@Order(1)
 	void randomOneWithCustomUrl() {
-		RandomuserClient randomuserClient = new RandomuserClient(System.getProperty("CUSTOMER_RUSER_API_URL", RandomuserClient.DEFAULT_API_URL));
+		RandomuserClient randomuserClient = new RandomuserClient(System.getenv().getOrDefault("CUSTOMER_RUSER_API_URL", RandomuserClient.DEFAULT_API_URL));
 		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().build());
 		assertNotNull(response);
 		assertNull(response.getError());
