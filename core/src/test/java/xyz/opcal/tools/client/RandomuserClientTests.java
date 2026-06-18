@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class RandomuserClientTests {
 	@Test
 	@Order(1)
 	void randomOne() {
-//		RandomuserClient randomuserClient = new RandomuserClient(); // homepage issues
+		// RandomuserClient randomuserClient = new RandomuserClient(); // homepage issues
 		RandomuserClient randomuserClient = testClient();
 		RandomuserResponse response = randomuserClient.random(RandomuserRequest.builder().build());
 		assertNotNull(response);
@@ -73,7 +73,7 @@ class RandomuserClientTests {
 		assertFalse(response.getResults().isEmpty());
 		User user = response.getResults().get(0);
 		assertNotNull(user);
-		assertTrue(StringUtils.equalsIgnoreCase(Gender.FEMALE.name(), user.getGender()));
+		assertTrue(Strings.CI.equals(Gender.FEMALE.name(), user.getGender()));
 	}
 
 	@Test
@@ -85,7 +85,7 @@ class RandomuserClientTests {
 		assertFalse(response.getResults().isEmpty());
 		User user = response.getResults().get(0);
 		assertNotNull(user);
-		assertTrue(StringUtils.equalsIgnoreCase(Nationalities.US.name(), user.getNat()));
+		assertTrue(Strings.CI.equals(Nationalities.US.name(), user.getNat()));
 	}
 
 	@Test
@@ -176,8 +176,8 @@ class RandomuserClientTests {
 
 		assertTrue(Objects.nonNull(response.getResults()));
 		assertEquals(results, response.getResults().size());
-		assertTrue(response.getResults().stream().allMatch(user -> StringUtils.equalsIgnoreCase(Gender.MALE.name(), user.getGender())));
-		assertTrue(response.getResults().stream().allMatch(user -> StringUtils.equalsIgnoreCase(Nationalities.AU.name(), user.getNat())));
+		assertTrue(response.getResults().stream().allMatch(user -> Strings.CI.equals(Gender.MALE.name(), user.getGender())));
+		assertTrue(response.getResults().stream().allMatch(user -> Strings.CI.equals(Nationalities.AU.name(), user.getNat())));
 	}
 
 	@Test

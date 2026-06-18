@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,7 +62,7 @@ public class RandomuserRequest {
 		}
 		if (nationalities != null) {
 			String natOption = Arrays.stream(nationalities).map(nat -> nat.name().toLowerCase()).reduce("", (sb, nat) -> sb + nat + ",", (s1, s2) -> s1 + s2);
-			uriVariables.put("nat", StringUtils.removeEnd(natOption, ","));
+			uriVariables.put("nat", Strings.CS.removeEnd(natOption, ","));
 		}
 		if (Objects.nonNull(page)) {
 			uriVariables.put("page", page);
