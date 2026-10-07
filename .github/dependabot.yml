@@ -1,12 +1,17 @@
 version: 2
 updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "12:00"
   - package-ecosystem: maven
     directory: "/"
     schedule:
       interval: "weekly"
       day: "thursday"
       time: "12:00"
-#    open-pull-requests-limit: 10
     ignore:
       - dependency-name: "ch.qos.logback:logback-classic"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
@@ -14,3 +19,4 @@ updates:
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "org.junit:junit-bom"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "org.apache.maven:apache-maven"
