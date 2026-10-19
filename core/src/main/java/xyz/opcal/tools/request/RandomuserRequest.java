@@ -1,11 +1,11 @@
 /*
- * Copyright 2020-2023 Opcal
+ * Copyright 2020-2026 Opcal.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,12 +26,15 @@ import org.apache.commons.lang3.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
 import xyz.opcal.tools.request.param.Gender;
 import xyz.opcal.tools.request.param.Nationalities;
 import xyz.opcal.tools.request.param.PasswordSpec;
 
 /**
- * https://randomuser.me/documentation
+ * Request parameters for the randomuser.me API.
+ *
+ * <p>Reference: https://randomuser.me/documentation
  */
 @Getter
 @AllArgsConstructor

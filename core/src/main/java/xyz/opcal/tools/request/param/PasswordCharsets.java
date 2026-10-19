@@ -1,11 +1,11 @@
 /*
- * Copyright 2020-2020-2023 Opcal
+ * Copyright 2020-2026 Opcal.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,17 @@
 package xyz.opcal.tools.request.param;
 
 /**
- * https://randomuser.me/documentation#passwords
+ * Password character sets.
+ *
+ * <p>Reference: https://randomuser.me/documentation#passwords
  */
 public enum PasswordCharsets {
-	SPECIAL, UPPER, LOWER, NUMBER;
+	/** Special characters. */
+	SPECIAL,
+	/** Upper case letters. */
+	UPPER,
+	/** Lower case letters. */
+	LOWER,
+	/** Digits. */
+	NUMBER;
 }

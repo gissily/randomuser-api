@@ -1,11 +1,11 @@
 /*
- * Copyright 2020-2020-2023 Opcal
+ * Copyright 2020-2026 Opcal.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Password option should be 'CHARSETS,MIN_LENGTH-MAX_LENGTH' or 'CHARSETS,MAX_LENGTH'
+ * Password option should be 'CHARSETS,MIN_LENGTH-MAX_LENGTH' or 'CHARSETS,MAX_LENGTH'.
+ *
  * @see "https://randomuser.me/documentation#passwords"
  */
 @Getter
@@ -34,14 +35,14 @@ public class PasswordSpec {
 	private Integer max;
 
 	/**
-	 * option format <br/>
+	 * Builds the password option format. <br/>
 	 * <code>
 	 * https://randomuser.me/api/?password=CHARSETS,MIN_LENGTH-MAX_LENGTH
 	 * OR
 	 * https://randomuser.me/api/?password=CHARSETS,MAX_LENGTH
 	 * </code>
 	 *
-	 * @return
+	 * @return the password option, or {@code null} when charsets or max is missing.
 	 */
 	public String toSpec() {
 		if (charsets == null || max == null) {
@@ -62,4 +63,3 @@ public class PasswordSpec {
 	}
 
 }
-
