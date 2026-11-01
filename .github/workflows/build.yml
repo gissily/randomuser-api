@@ -17,7 +17,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v6
         with:
-          java-version: '8'
+          java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
           server-id: central
@@ -32,8 +32,8 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
         run: |
           ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
       
-    
