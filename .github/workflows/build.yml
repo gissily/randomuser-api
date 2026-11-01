@@ -20,9 +20,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
-          server-id: central
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
       - name: Install gpg
         run: |
           sudo apt update && sudo apt install -y gnupg2
@@ -30,8 +27,6 @@ jobs:
           echo "${{ secrets.GPG_PRI }}" | gpg --batch --import
       - name: Testing && Publishing SNAPSHOT
         env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
         run: |
