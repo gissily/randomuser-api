@@ -21,18 +21,21 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Install gpg
+        env:
+          GPG_PRI: ${{ secrets.GPG_PRI }}
         run: |
           sudo apt update && sudo apt install -y gnupg2
           export GPG_TTY=$(tty)
-          echo "${{ secrets.GPG_PRI }}" | gpg --batch --import
+          echo "${{ env.GPG_PRI }}" | gpg --batch --import
       - name: Testing && Publishing SNAPSHOT
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
           SONAR_HOST_URL: 'https://sonarcloud.io'
           SONAR_TOKEN: ${{ secrets.SQC_TOKEN }}
         run: |
-          ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} sonar:sonar -Psonarcloud
+          ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ env.GPG_PASSPHRASE }} sonar:sonar -Psonarcloud
       - name: Sonarqube
         env:
           SONAR_HOST_URL: ${{ secrets.SQO_URL }}
