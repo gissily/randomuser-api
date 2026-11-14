@@ -48,7 +48,7 @@ class SPIDiscoveryTest {
 		List<RandomUserClientFactory> factories = StreamSupport.stream(
 				ServiceLoader.load(RandomUserClientFactory.class).spliterator(), false).toList();
 
-		assertTrue(factories.stream().anyMatch(f -> f instanceof ExampleFactory),
+		assertTrue(factories.stream().anyMatch(ExampleFactory.class::isInstance),
 				"ServiceLoader must discover the registered ExampleFactory from META-INF/services");
 	}
 

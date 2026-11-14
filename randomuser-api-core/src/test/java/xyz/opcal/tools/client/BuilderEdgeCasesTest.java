@@ -27,7 +27,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Spliterators;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,18 +45,19 @@ class BuilderEdgeCasesTest {
 	@DisplayName("Reflective instantiation failure is wrapped in IllegalStateException")
 	void instantiationFailureWrapped() {
 		// FailingFactory has a private constructor, so newInstance() fails and is wrapped.
-		assertThrows(IllegalStateException.class,
-				() -> RandomUserClient.builder().implementation(FailingFactory.class).build());
+		RandomUserClient.Builder builder = RandomUserClient.builder().implementation(FailingFactory.class);
+		assertThrows(IllegalStateException.class, builder::build);
 	}
 
 	@Test
 	@DisplayName("Multiple implementations: the first factory is used")
+	@SuppressWarnings("unchecked")
 	void multipleImplementationsFirstWins() {
 		try (MockedStatic<RandomUserClientFactoryManager> mocked =
 				mockStatic(RandomUserClientFactoryManager.class, CALLS_REAL_METHODS)) {
 			ServiceLoader<RandomUserClientFactory> two = mock(ServiceLoader.class);
 			List<RandomUserClientFactory> factories = List.of(new ExampleFactory(), new ExampleFactory2());
-			when(two.spliterator()).thenReturn(StreamSupport.stream(factories.spliterator(), false).spliterator());
+			when(two.spliterator()).thenReturn(factories.spliterator());
 			mocked.when(RandomUserClientFactoryManager::getFactoryLoader).thenReturn(two);
 
 			RandomUserClient client = RandomUserClient.builder().build();
@@ -70,6 +70,7 @@ class BuilderEdgeCasesTest {
 
 	@Test
 	@DisplayName("No SPI factories fall back to the JDK HttpClient implementation")
+	@SuppressWarnings("unchecked")
 	void noFactoriesFallBackToJdk() {
 		try (MockedStatic<RandomUserClientFactoryManager> mocked =
 				mockStatic(RandomUserClientFactoryManager.class, CALLS_REAL_METHODS)) {
@@ -89,6 +90,7 @@ class BuilderEdgeCasesTest {
 	void blankApiUrlRejected() {
 		// The ClientConfig constructor throws when apiUrl is blank, before any SPI discovery happens,
 		// so the exception surfaces regardless of the loader.
-		assertThrows(IllegalArgumentException.class, () -> RandomUserClient.builder().apiUrl("   ").build());
+		RandomUserClient.Builder builder = RandomUserClient.builder().apiUrl("   ");
+		assertThrows(IllegalArgumentException.class, builder::build);
 	}
 }

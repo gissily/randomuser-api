@@ -101,8 +101,9 @@ class JDKHttpClientImplErrorTest {
 	void rateLimitThrows() throws Exception {
 		doReturn(httpResponse(429, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
 
-		RandomUserApiException thrown = assertThrows(RandomUserApiException.class,
-				() -> newClient().random(RandomuserRequest.builder().build()));
+		JDKHttpClientImpl client = newClient();
+		RandomuserRequest request = RandomuserRequest.builder().build();
+		RandomUserApiException thrown = assertThrows(RandomUserApiException.class, () -> client.random(request));
 
 		assertEquals(429, thrown.getStatusCode());
 	}
@@ -112,8 +113,9 @@ class JDKHttpClientImplErrorTest {
 	void serverErrorThrows() throws Exception {
 		doReturn(httpResponse(500, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
 
-		RandomUserApiException thrown = assertThrows(RandomUserApiException.class,
-				() -> newClient().random(RandomuserRequest.builder().build()));
+		JDKHttpClientImpl client = newClient();
+		RandomuserRequest request = RandomuserRequest.builder().build();
+		RandomUserApiException thrown = assertThrows(RandomUserApiException.class, () -> client.random(request));
 
 		assertEquals(500, thrown.getStatusCode());
 		assertEquals(new String(SAMPLE_BODY, StandardCharsets.UTF_8), thrown.getResponseBody());
@@ -124,8 +126,9 @@ class JDKHttpClientImplErrorTest {
 	void ioErrorThrows() throws Exception {
 		doThrow(new IOException("connection refused")).when(httpClient).send(any(HttpRequest.class), any());
 
-		RandomUserApiException thrown = assertThrows(RandomUserApiException.class,
-				() -> newClient().random(RandomuserRequest.builder().build()));
+		JDKHttpClientImpl client = newClient();
+		RandomuserRequest request = RandomuserRequest.builder().build();
+		RandomUserApiException thrown = assertThrows(RandomUserApiException.class, () -> client.random(request));
 
 		assertEquals(-1, thrown.getStatusCode());
 		assertInstanceOf(IOException.class, thrown.getCause());
@@ -136,8 +139,9 @@ class JDKHttpClientImplErrorTest {
 	void interruptedThrows() throws Exception {
 		doThrow(new InterruptedException("interrupted")).when(httpClient).send(any(HttpRequest.class), any());
 
-		RandomUserApiException thrown = assertThrows(RandomUserApiException.class,
-				() -> newClient().random(RandomuserRequest.builder().build()));
+		JDKHttpClientImpl client = newClient();
+		RandomuserRequest request = RandomuserRequest.builder().build();
+		RandomUserApiException thrown = assertThrows(RandomUserApiException.class, () -> client.random(request));
 
 		assertEquals(-1, thrown.getStatusCode());
 		assertInstanceOf(InterruptedException.class, thrown.getCause());
@@ -151,8 +155,9 @@ class JDKHttpClientImplErrorTest {
 	void statusBelow200Throws() throws Exception {
 		doReturn(httpResponse(100, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
 
-		RandomUserApiException thrown = assertThrows(RandomUserApiException.class,
-				() -> newClient().random(RandomuserRequest.builder().build()));
+		JDKHttpClientImpl client = newClient();
+		RandomuserRequest request = RandomuserRequest.builder().build();
+		RandomUserApiException thrown = assertThrows(RandomUserApiException.class, () -> client.random(request));
 
 		assertEquals(100, thrown.getStatusCode());
 	}

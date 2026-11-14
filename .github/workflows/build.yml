@@ -38,5 +38,5 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SQO_URL }}
           SONAR_TOKEN: ${{ secrets.SQO_TOKEN }}
         run: |
-          ./mvnw sonar:sonar -Dsonar.projectKey=xyz.opcal.tools:randomuser-api -Dsonar.projectName='randomuser-api'
+          ./mvnw sonar:sonar -Psonarqube
           

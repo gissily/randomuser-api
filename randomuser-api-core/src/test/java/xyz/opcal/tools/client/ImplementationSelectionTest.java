@@ -85,7 +85,8 @@ class ImplementationSelectionTest {
 	void unknownClassThrows() {
 		System.setProperty(PROPERTY, "com.example.DoesNotExist");
 
-		assertThrows(IllegalArgumentException.class, () -> RandomUserClient.builder().build());
+		RandomUserClient.Builder builder = RandomUserClient.builder();
+		assertThrows(IllegalArgumentException.class, builder::build);
 	}
 
 	@Test
@@ -93,6 +94,7 @@ class ImplementationSelectionTest {
 	void nonFactoryClassThrows() {
 		System.setProperty(PROPERTY, String.class.getName());
 
-		assertThrows(IllegalArgumentException.class, () -> RandomUserClient.builder().build());
+		RandomUserClient.Builder builder = RandomUserClient.builder();
+		assertThrows(IllegalArgumentException.class, builder::build);
 	}
 }

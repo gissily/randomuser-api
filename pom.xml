@@ -79,6 +79,14 @@
 				<sonar.organization>gh-gissily</sonar.organization>
 			</properties>
 		</profile>
+		<profile>
+			<id>sonarqube</id>
+			<properties>
+				<!-- sonar -->
+				<sonar.projectKey>xyz.opcal.tools:randomuser-api</sonar.projectKey>
+				<sonar.projectName>randomuser-api</sonar.projectName>
+			</properties>
+		</profile>
 	</profiles>
 
 	<build>
