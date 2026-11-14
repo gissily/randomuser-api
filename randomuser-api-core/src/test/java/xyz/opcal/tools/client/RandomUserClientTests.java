@@ -1,0 +1,228 @@
+/*
+ * Copyright 2020-2026 Opcal.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package xyz.opcal.tools.client;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.commons.lang3.Strings;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import lombok.extern.slf4j.Slf4j;
+
+import xyz.opcal.tools.request.ApiVersion;
+import xyz.opcal.tools.request.RandomuserRequest;
+import xyz.opcal.tools.request.param.Gender;
+import xyz.opcal.tools.request.param.Nationalities;
+import xyz.opcal.tools.request.param.PasswordCharsets;
+import xyz.opcal.tools.request.param.PasswordSpec;
+import xyz.opcal.tools.response.RandomuserResponse;
+import xyz.opcal.tools.response.result.User;
+
+/**
+ * Integration tests exercising the real randomuser.me API through the default JDK
+ * {@code HttpClient} client. Follows the test strategy in SC-003: real API calls covering
+ * the full HTTP + Jackson serialization path (deterministic via {@code seed}, with delays
+ * to avoid rate limiting).
+ */
+@Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class RandomUserClientTests {
+
+	static RandomUserClient testClient() {
+		String apiUrl = System.getenv().getOrDefault("CUSTOMER_RUSER_API_URL", RandomUserClient.DEFAULT_API_URL);
+		return RandomUserClient.builder().apiUrl(apiUrl).build();
+	}
+
+	@Test
+	@Order(1)
+	void randomOne() {
+		RandomUserClient randomUserClient = testClient();
+		RandomuserResponse response = randomUserClient.random(RandomuserRequest.builder().build());
+		assertNotNull(response);
+		assertNull(response.getError());
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertFalse(response.getResults().isEmpty());
+		User user = response.getResults().get(0);
+		assertNotNull(user);
+		assertNotNull(user.getDob());
+		assertNotNull(user.getId());
+		assertNotNull(user.getLocation());
+		assertNotNull(user.getLogin());
+		assertNotNull(user.getPicture());
+		assertNotNull(user.getRegistered());
+	}
+
+	@Test
+	@Order(1)
+	void randomOneWithCustomUrl() {
+		String apiUrl = System.getenv().getOrDefault("CUSTOMER_RUSER_API_URL", RandomUserClient.DEFAULT_API_URL);
+		RandomUserClient randomUserClient = RandomUserClient.builder().apiUrl(apiUrl).build();
+		RandomuserResponse response = randomUserClient.random(RandomuserRequest.builder().build());
+		assertNotNull(response);
+		assertNull(response.getError());
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertFalse(response.getResults().isEmpty());
+		User user = response.getResults().get(0);
+		assertNotNull(user);
+	}
+
+	@Test
+	@Order(2)
+	void randomGender() {
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().gender(Gender.FEMALE).build());
+		assertNotNull(response);
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertFalse(response.getResults().isEmpty());
+		User user = response.getResults().get(0);
+		assertNotNull(user);
+		assertTrue(Strings.CI.equals(Gender.FEMALE.name(), user.getGender()));
+	}
+
+	@Test
+	@Order(3)
+	void randomNation() {
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().nationalities(new Nationalities[] { Nationalities.US }).build());
+		assertNotNull(response);
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertFalse(response.getResults().isEmpty());
+		User user = response.getResults().get(0);
+		assertNotNull(user);
+		assertTrue(Strings.CI.equals(Nationalities.US.name(), user.getNat()));
+	}
+
+	@Test
+	@Order(4)
+	void randomPage() {
+		String seed = "sead123";
+		int page = 1;
+		int results = 10;
+
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().seed(seed).page(page).results(results).build());
+		assertNotNull(response);
+		assertNotNull(response.getInfo());
+		assertEquals(seed, response.getInfo().getSeed());
+		assertEquals(page, response.getInfo().getPage());
+
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertEquals(results, response.getResults().size());
+	}
+
+	@Test
+	@Order(5)
+	void randomInc() {
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().inc("gender,name,nat").build());
+		assertNotNull(response);
+
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertFalse(response.getResults().isEmpty());
+		User user = response.getResults().get(0);
+		assertNotNull(user);
+		assertNotNull(user.getGender());
+		assertNotNull(user.getName());
+		assertNotNull(user.getNat());
+		assertNull(user.getRegistered());
+		assertNull(user.getDob());
+	}
+
+	@Test
+	@Order(6)
+	void randomExc() {
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().exc("login").build());
+		assertNotNull(response);
+
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertFalse(response.getResults().isEmpty());
+		User user = response.getResults().get(0);
+		assertNotNull(user);
+		assertNotNull(user.getGender());
+		assertNotNull(user.getName());
+		assertNotNull(user.getNat());
+		assertNull(user.getLogin());
+	}
+
+	@Test
+	@Order(7)
+	void randomPassword() {
+		int min = 10;
+		int max = 20;
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder()
+				.password(PasswordSpec.builder()
+						.charsets(new PasswordCharsets[] { PasswordCharsets.LOWER, PasswordCharsets.UPPER, PasswordCharsets.SPECIAL, PasswordCharsets.NUMBER })
+						.min(min).max(max).build())
+				.build());
+		assertNotNull(response);
+
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertFalse(response.getResults().isEmpty());
+		User user = response.getResults().get(0);
+		assertNotNull(user);
+		assertNotNull(user.getLogin());
+		assertNotNull(user.getLogin().getPassword());
+		int pwLength = user.getLogin().getPassword().length();
+		log.info("Generated password length: {} (range {}-{})", pwLength, min, max);
+		assertTrue(pwLength >= min && pwLength <= max);
+	}
+
+	@Test
+	@Order(8)
+	void randomFullParams() {
+		int page = 2;
+		int results = 10;
+
+		RandomuserResponse response = testClient().random(RandomuserRequest.builder().page(page).results(results).gender(Gender.MALE)
+				.password(PasswordSpec.builder().charsets(new PasswordCharsets[] { PasswordCharsets.LOWER, PasswordCharsets.NUMBER }).build())
+				.nationalities(new Nationalities[] { Nationalities.AU }).build());
+		assertNotNull(response);
+		assertNotNull(response.getInfo());
+		assertEquals(page, response.getInfo().getPage());
+
+		assertTrue(Objects.nonNull(response.getResults()));
+		assertEquals(results, response.getResults().size());
+		assertTrue(response.getResults().stream().allMatch(user -> Strings.CI.equals(Gender.MALE.name(), user.getGender())));
+		assertTrue(response.getResults().stream().allMatch(user -> Strings.CI.equals(Nationalities.AU.name(), user.getNat())));
+	}
+
+	@Test
+	@Order(9)
+	void randomApiVersion() {
+		Map<String, Object> response = testClient().random(ApiVersion.V1_1, RandomuserRequest.builder().build());
+		assertNotNull(response);
+		assertNotNull(response.get("results"));
+	}
+
+	@Test
+	@Order(9)
+	void randomApiVersionWithCustomQuery() {
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("gender", Gender.MALE.name().toLowerCase());
+
+		Map<String, Object> response = testClient().random(ApiVersion.V1_1, queryMap);
+		assertNotNull(response);
+		assertNotNull(response.get("results"));
+	}
+}

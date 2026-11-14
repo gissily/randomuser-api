@@ -29,9 +29,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
-          GH_NAME: ${{ secrets.GH_NAME }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          SONAR_HOST_URL: 'https://sonarcloud.io'
+          SONAR_TOKEN: ${{ secrets.SQC_TOKEN }}
         run: |
-          cat ~/.m2/settings.xml
-          ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
-      
+          ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} sonar:sonar -Psonarcloud
+          

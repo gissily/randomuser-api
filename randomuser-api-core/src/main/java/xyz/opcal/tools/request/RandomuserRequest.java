@@ -1,0 +1,84 @@
+/*
+ * Copyright 2020-2026 Opcal.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package xyz.opcal.tools.request;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+import xyz.opcal.tools.request.param.Gender;
+import xyz.opcal.tools.request.param.Nationalities;
+import xyz.opcal.tools.request.param.PasswordSpec;
+
+/**
+ * Request parameters for the randomuser.me API.
+ *
+ * <p>Reference: https://randomuser.me/documentation
+ */
+@Getter
+@AllArgsConstructor
+@Builder
+public class RandomuserRequest {
+
+	@Builder.Default
+	private int results = 1;
+	private Gender gender;
+	private PasswordSpec password;
+	private String seed;
+	private Nationalities[] nationalities;
+	private Integer page;
+	private String inc;
+	private String exc;
+
+	public Map<String, Object> queryMap() {
+		Map<String, Object> queryMap = new HashMap<>();
+		queryMap.put("results", results);
+		if (gender != null) {
+			queryMap.put("gender", gender.name().toLowerCase());
+		}
+		if (password != null) {
+			queryMap.put("password", password.toSpec());
+		}
+		if (seed != null) {
+			queryMap.put("seed", seed);
+		}
+		if (nationalities != null) {
+			List<String> nats = new ArrayList<>();
+			for (Nationalities nat : nationalities) {
+				nats.add(nat.name().toLowerCase());
+			}
+			queryMap.put("nat", String.join(",", nats));
+		}
+		if (Objects.nonNull(page)) {
+			queryMap.put("page", page);
+		}
+		if (Objects.nonNull(inc)) {
+			queryMap.put("inc", inc);
+		}
+		if (Objects.nonNull(exc)) {
+			queryMap.put("exc", exc);
+		}
+		return queryMap;
+	}
+
+}
