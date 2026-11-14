@@ -20,8 +20,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
-          overwrite-settings: true
-          settings-path: ./
       - name: Install gpg
         run: |
           sudo apt update && sudo apt install -y gnupg2
@@ -34,5 +32,6 @@ jobs:
           GH_NAME: ${{ secrets.GH_NAME }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          cat ~/.m2/settings.xml
           ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
       
