@@ -15,5 +15,5 @@ jobs:
           cache: 'maven'
       - name: Testing
         run: |
-          ./mvnw clean verify
+          ./mvnw clean verify -Dgpg.skip=true
 

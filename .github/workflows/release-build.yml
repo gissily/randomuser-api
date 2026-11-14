@@ -26,17 +26,20 @@ jobs:
           RELEASE_VERSION=${SNAPSHOT_VERSION/-SNAPSHOT/}
           ./mvnw versions:set -DnewVersion=${RELEASE_VERSION}
       - name: Install gpg
+        env:
+          GPG_PRI: ${{ secrets.GPG_PRI }}
         run: |
           sudo apt update && sudo apt install -y gnupg2
           export GPG_TTY=$(tty)
-          echo "${{ secrets.GPG_PRI }}" | gpg --batch --import
+          echo "${{ env.GPG_PRI }}" | gpg --batch --import
       - name: Testing && Publishing RELEASE
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           CUSTOMER_RUSER_API_URL: ${{ secrets.CUSTOMER_API_URL }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+          ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ env.GPG_PASSPHRASE }}
       - name: Release
         uses: softprops/action-gh-release@v3
         env:
