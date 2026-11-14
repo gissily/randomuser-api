@@ -35,6 +35,7 @@ jobs:
           ./mvnw clean --batch-mode deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} sonar:sonar -Psonarcloud
       - name: Sonarqube
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SQO_URL }}
           SONAR_TOKEN: ${{ secrets.SQO_TOKEN }}
         run: |
