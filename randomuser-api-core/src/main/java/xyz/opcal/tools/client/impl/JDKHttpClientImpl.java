@@ -59,8 +59,6 @@ import xyz.opcal.tools.response.RandomuserResponse;
 @Slf4j
 public class JDKHttpClientImpl implements RandomUserClient {
 
-	private static final String VERSION_PATH = "/api/%s/";
-
 	private final HttpClient httpClient;
 	private final JsonMapper objectMapper;
 	private final String apiUrl;
@@ -98,7 +96,7 @@ public class JDKHttpClientImpl implements RandomUserClient {
 	}
 
 	private static String versionPath(ApiVersion apiVersion) {
-		return String.format(VERSION_PATH, apiVersion.getVersion());
+		return API + "/" + apiVersion.getVersion() + "/";
 	}
 
 	private <T> T randomUser(String path, Map<String, Object> queryMap, TypeReference<T> typeReference) {
