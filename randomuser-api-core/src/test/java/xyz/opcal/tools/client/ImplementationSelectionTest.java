@@ -58,7 +58,7 @@ class ImplementationSelectionTest {
 
 	@Test
 	@DisplayName("Explicit implementation takes precedence over the system property")
-	void explicitTakesPrecedenceOverSystemProperty() {
+	void explicitTakesPrecedence() {
 		System.setProperty(PROPERTY, ExampleFactory.class.getName());
 
 		RandomUserClient client = RandomUserClient.builder()

@@ -189,7 +189,7 @@ class JDKHttpClientImplErrorTest {
 
 	@Test
 	@DisplayName("A base URL without a question mark joins the query with a question mark")
-	void urlWithoutQuestionMarkJoinsWithQuestionMark() throws Exception {
+	void urlWithoutQuestionMarkJoinsWithQuery() throws Exception {
 		// A base URL without '?' must join a non-empty query with '?'.
 		JDKHttpClientImpl client = newClient("https://randomuser.me", Duration.ofSeconds(30));
 		doReturn(httpResponse(200, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());

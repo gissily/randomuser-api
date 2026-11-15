@@ -214,6 +214,7 @@
 
 	<modules>
 		<module>randomuser-api-core</module>
+		<module>randomuser-api-openfeign</module>
 	</modules>
 
 	<distributionManagement>

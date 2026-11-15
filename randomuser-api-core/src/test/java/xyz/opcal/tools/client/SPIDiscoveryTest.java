@@ -44,7 +44,7 @@ class SPIDiscoveryTest {
 
 	@Test
 	@DisplayName("SPI service file registers ExampleFactory")
-	void serviceFileRegistersExampleFactory() {
+	void serviceFileRegistersFactory() {
 		List<RandomUserClientFactory> factories = StreamSupport.stream(
 				ServiceLoader.load(RandomUserClientFactory.class).spliterator(), false).toList();
 

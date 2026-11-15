@@ -18,20 +18,24 @@ package xyz.opcal.tools.client.api;
 
 import java.util.Map;
 
+import feign.Param;
+import feign.QueryMap;
+import feign.RequestLine;
+
 import xyz.opcal.tools.response.RandomuserResponse;
 
 /**
- * HTTP contract for the randomuser.me API.
+ * OpenFeign HTTP contract for the randomuser.me API.
  *
- * <p>This is a plain interface with no framework annotations. Each implementation
- * interprets the two endpoints using its own HTTP client; the contract itself carries
- * no Feign or other serialization configuration. The {@code /api} segment is part of the
- * endpoint path, not the base URL.
+ * <p>The request declaration this module uses to call the API. It carries OpenFeign annotations
+ * ({@code @RequestLine} / {@code @QueryMap} / {@code @Param}) that map each method to an HTTP
+ * endpoint; the OpenFeign client builds a proxy of this interface bound to the configured base
+ * URL. The {@code /api} segment is part of the endpoint path, not the base URL.
  *
  * <p>Endpoints:
  * <ul>
- *   <li>{@code GET /api} — {@link #randomuser(Map)};</li>
- *   <li>{@code GET /api/{api}/} — {@link #randomuser(String, Map)} (versioned).</li>
+ *   <li>{@code GET /api} — {@link #randomuser(Map)} — the latest API;</li>
+ *   <li>{@code GET /api/{api}/} — {@link #randomuser(String, Map)} — a specific API version.</li>
  * </ul>
  */
 public interface RandomuserApi {
@@ -40,16 +44,18 @@ public interface RandomuserApi {
 	 * Fetches random users from the latest API.
 	 *
 	 * @param queryMap the query parameters to send with the request.
-	 * @return the random user response.
+	 * @return the typed random user response.
 	 */
-	RandomuserResponse randomuser(Map<String, Object> queryMap);
+	@RequestLine("GET /api")
+	RandomuserResponse randomuser(@QueryMap Map<String, Object> queryMap);
 
 	/**
 	 * Fetches random users from a specific API version.
 	 *
 	 * @param api the API version path segment (e.g. {@code "1.0"} ... {@code "1.4"}).
 	 * @param queryMap the query parameters to send with the request.
-	 * @return the random user response.
+	 * @return the raw response as a map.
 	 */
-	RandomuserResponse randomuser(String api, Map<String, Object> queryMap);
+	@RequestLine("GET /api/{api}/")
+	Map<String, Object> randomuser(@Param("api") String api, @QueryMap Map<String, Object> queryMap);
 }
