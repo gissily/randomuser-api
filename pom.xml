@@ -215,6 +215,7 @@
 	<modules>
 		<module>randomuser-api-core</module>
 		<module>randomuser-api-openfeign</module>
+		<module>randomuser-api-apachehttpclient</module>
 		<module>randomuser-api-bom</module>
 	</modules>
 

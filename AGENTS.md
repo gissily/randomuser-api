@@ -16,7 +16,8 @@
 - **Javadoc describes behavior, not spec**: Javadoc and comments MUST describe what the code IS and DOES (purpose, parameters, return, side effects). They MUST NOT reference spec artifacts (`specs/`, `spec.md`, `plan.md`, `tasks.md`, `FR-`, `SC-`, `US`), because spec documents are never published with the jar. A Javadoc that points at a spec chapter or requirement ID conveys nothing to a reader of the code.
 - **README describes what/does/how**: Each module README MUST state what the module is, what it does, and how to use it. It MUST NOT reference spec artifacts. Keep it build-and-usage focused.
 - **Imports over fully-qualified names**: When a referenced type is not in the same package and is not name-colliding, use an `import` statement. Do NOT write the fully-qualified class name inline inside code blocks or method bodies.
-- **Lint before build**: When idea (or any lint) tools are available, agents MUST run the lint tool to check code quality — including WARNING-level problems — before building. Fix warnings that are reasonable; if a warning is not reasonable, seek a suggestion before suppressing it. Never disable lint rules to make them pass.
+- **Lint before build**: When idea (or any lint) tools are available, agents MUST run `lint_files` to check code quality — including WARNING-level problems — before building. Fix warnings that are reasonable; if a warning is not reasonable, seek a suggestion before suppressing it. Never disable lint rules to make them pass.
+- **Temporary files under /tmp**: Any temporary or throwaway file created for validation or experimentation MUST be created under `/tmp`, never inside the project working directory or the user's home directory. A throwaway consumer project for BOM import validation, for example, MUST live under `/tmp` and MUST be removed after use.
 
 ## Build & Test
 
