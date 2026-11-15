@@ -7,10 +7,16 @@
 - **Naming Convention**:
   - Test methods must use `camelCase` style.
   - Other naming patterns (e.g., BDD style with `_`) must use `@DisplayName`.
+  - Names must be concise and meaningful (see-name-know-meaning). Do NOT pad class/method names by transcribing spec section text or requirement IDs (e.g. `FR-007`); pick a short, accurate name.
+  - Long human-readable descriptions belong in `@DisplayName`, NOT in the method name. Keep test method names short; put the full sentence in `@DisplayName`.
 - Do not touch any files without required.
 - **Checkstyle**: All agents MUST run checkstyle validation before committing. Never disable checkstyle rules.
 - **Git Operations**: The Spec Kit workflow may mention git commands for creating features or committing code changes. This project does NOT require any git operations from agents — the user handles all git operations manually. When you encounter any step involving git (branch creation, commit, push, etc.), skip it entirely and proceed with the next step.
 - **English Only**: All generated documents and code comments MUST be written in English — this includes spec/plan/tasks and every other Markdown file, as well as all Javadoc and inline comments. No exceptions.
+- **Javadoc describes behavior, not spec**: Javadoc and comments MUST describe what the code IS and DOES (purpose, parameters, return, side effects). They MUST NOT reference spec artifacts (`specs/`, `spec.md`, `plan.md`, `tasks.md`, `FR-`, `SC-`, `US`), because spec documents are never published with the jar. A Javadoc that points at a spec chapter or requirement ID conveys nothing to a reader of the code.
+- **README describes what/does/how**: Each module README MUST state what the module is, what it does, and how to use it. It MUST NOT reference spec artifacts. Keep it build-and-usage focused.
+- **Imports over fully-qualified names**: When a referenced type is not in the same package and is not name-colliding, use an `import` statement. Do NOT write the fully-qualified class name inline inside code blocks or method bodies.
+- **Lint before build**: When idea (or any lint) tools are available, agents MUST run the lint tool to check code quality — including WARNING-level problems — before building. Fix warnings that are reasonable; if a warning is not reasonable, seek a suggestion before suppressing it. Never disable lint rules to make them pass.
 
 ## Build & Test
 
