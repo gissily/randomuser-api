@@ -18,20 +18,19 @@ package xyz.opcal.tools.client.impl;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
-import java.util.StringJoiner;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
+import xyz.opcal.tools.client.ClientConfig;
 import xyz.opcal.tools.client.RandomUserClient;
 import xyz.opcal.tools.exception.RandomUserApiException;
 import xyz.opcal.tools.request.ApiVersion;
@@ -65,15 +64,14 @@ public class JDKHttpClientImpl implements RandomUserClient {
 	private final Duration timeout;
 
 	/**
-	 * Creates an implementation with the given base URL and timeout, building a default JDK
-	 * {@link HttpClient} whose connect timeout is the given {@code timeout}.
+	 * Creates an implementation from the given {@link ClientConfig}, building a default JDK
+	 * {@link HttpClient} whose connect timeout is the configured {@code timeout}.
 	 *
-	 * @param apiUrl the API base URL (root domain).
-	 * @param timeout the HTTP timeout, applied to both the client's connect timeout and each request.
+	 * @param config the client configuration carrying the API base URL and HTTP timeout.
 	 */
-	public JDKHttpClientImpl(String apiUrl, Duration timeout) {
-		this.apiUrl = apiUrl;
-		this.timeout = timeout;
+	public JDKHttpClientImpl(ClientConfig config) {
+		this.apiUrl = config.apiUrl();
+		this.timeout = config.timeout();
 		this.objectMapper = JsonMapper.builder()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 				.build();
@@ -131,18 +129,5 @@ public class JDKHttpClientImpl implements RandomUserClient {
 			Thread.currentThread().interrupt();
 			throw new RandomUserApiException("Interrupted while calling " + uri, e);
 		}
-	}
-
-	private String encodeQuery(Map<String, Object> queryMap) {
-		StringJoiner joiner = new StringJoiner("&");
-		for (Map.Entry<String, Object> entry : queryMap.entrySet()) {
-			if (entry.getValue() == null) {
-				continue;
-			}
-			joiner.add(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8)
-					+ "="
-					+ URLEncoder.encode(String.valueOf(entry.getValue()), StandardCharsets.UTF_8));
-		}
-		return joiner.toString();
 	}
 }

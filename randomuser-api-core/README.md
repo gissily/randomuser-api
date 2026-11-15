@@ -122,8 +122,8 @@ import xyz.opcal.tools.client.RandomUserClientFactory;
 public class MyFactory implements RandomUserClientFactory {
     @Override
     public RandomUserClient create(ClientConfig config) {
-        // config.apiUrl() and config.timeout() carry the builder's configuration.
-        return new JDKHttpClientImpl(config.apiUrl(), config.timeout());
+        // config carries the builder's apiUrl and timeout.
+        return new JDKHttpClientImpl(config);
     }
 }
 ```

@@ -32,6 +32,6 @@ public class JDKHttpClientFactory implements RandomUserClientFactory {
 
 	@Override
 	public RandomUserClient create(ClientConfig config) {
-		return new JDKHttpClientImpl(config.apiUrl(), config.timeout());
+		return new JDKHttpClientImpl(config);
 	}
 }

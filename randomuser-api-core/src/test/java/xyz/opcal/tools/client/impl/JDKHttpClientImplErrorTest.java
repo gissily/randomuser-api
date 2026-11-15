@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
+import xyz.opcal.tools.client.ClientConfig;
 import xyz.opcal.tools.client.RandomUserClient;
 import xyz.opcal.tools.exception.RandomUserApiException;
 import xyz.opcal.tools.request.ApiVersion;
@@ -60,15 +61,13 @@ class JDKHttpClientImplErrorTest {
 
 	private static final byte[] SAMPLE_BODY = "{\"error\":\"boom\"}".getBytes(StandardCharsets.UTF_8);
 
-	private HttpClient.Builder builder;
-
 	private HttpClient httpClient;
 
 	private MockedStatic<HttpClient> mockedHttpClient;
 
 	@BeforeEach
 	void setUp() {
-		this.builder = mock(HttpClient.Builder.class);
+		HttpClient.Builder builder = mock(HttpClient.Builder.class);
 		this.httpClient = mock(HttpClient.class);
 		mockedHttpClient = mockStatic(HttpClient.class);
 		mockedHttpClient.when(HttpClient::newBuilder).thenReturn(builder);
@@ -86,20 +85,21 @@ class JDKHttpClientImplErrorTest {
 	}
 
 	private JDKHttpClientImpl newClient(String apiUrl, Duration timeout) {
-		return new JDKHttpClientImpl(apiUrl, timeout);
+		return new JDKHttpClientImpl(new ClientConfig(apiUrl, timeout));
 	}
 
-	private HttpResponse<byte[]> httpResponse(int status, byte[] body) {
+	@SuppressWarnings("unchecked")
+	private HttpResponse<byte[]> httpResponse(int status) {
 		HttpResponse<byte[]> response = mock(HttpResponse.class);
 		doReturn(status).when(response).statusCode();
-		doReturn(body).when(response).body();
+		doReturn(SAMPLE_BODY).when(response).body();
 		return response;
 	}
 
 	@Test
 	@DisplayName("HTTP 429 rate limit throws RandomUserApiException with status 429")
 	void rateLimitThrows() throws Exception {
-		doReturn(httpResponse(429, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
+		doReturn(httpResponse(429)).when(httpClient).send(any(HttpRequest.class), any());
 
 		JDKHttpClientImpl client = newClient();
 		RandomuserRequest request = RandomuserRequest.builder().build();
@@ -111,7 +111,7 @@ class JDKHttpClientImplErrorTest {
 	@Test
 	@DisplayName("HTTP 500 throws RandomUserApiException with the status code and body")
 	void serverErrorThrows() throws Exception {
-		doReturn(httpResponse(500, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
+		doReturn(httpResponse(500)).when(httpClient).send(any(HttpRequest.class), any());
 
 		JDKHttpClientImpl client = newClient();
 		RandomuserRequest request = RandomuserRequest.builder().build();
@@ -153,7 +153,7 @@ class JDKHttpClientImplErrorTest {
 	@Test
 	@DisplayName("HTTP 100 (< 200) throws RandomUserApiException as an unexpected status")
 	void statusBelow200Throws() throws Exception {
-		doReturn(httpResponse(100, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
+		doReturn(httpResponse(100)).when(httpClient).send(any(HttpRequest.class), any());
 
 		JDKHttpClientImpl client = newClient();
 		RandomuserRequest request = RandomuserRequest.builder().build();
@@ -165,7 +165,7 @@ class JDKHttpClientImplErrorTest {
 	@Test
 	@DisplayName("Empty query map skips the query-string append on the URI")
 	void emptyQueryMapSkipsQueryString() throws Exception {
-		doReturn(httpResponse(200, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
+		doReturn(httpResponse(200)).when(httpClient).send(any(HttpRequest.class), any());
 
 		// An empty query map produces an empty query string, exercising the skip branch.
 		Map<String, Object> result = newClient().random(ApiVersion.V1_1, new HashMap<>());
@@ -178,7 +178,7 @@ class JDKHttpClientImplErrorTest {
 	void urlWithQuestionMarkAppendsAmpersand() throws Exception {
 		// A base URL that already contains '?' must join a non-empty query with '&', not '?'.
 		JDKHttpClientImpl client = newClient("https://randomuser.me/?x=1", Duration.ofSeconds(30));
-		doReturn(httpResponse(200, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
+		doReturn(httpResponse(200)).when(httpClient).send(any(HttpRequest.class), any());
 
 		Map<String, Object> query = new HashMap<>();
 		query.put("results", 1);
@@ -192,7 +192,7 @@ class JDKHttpClientImplErrorTest {
 	void urlWithoutQuestionMarkJoinsWithQuery() throws Exception {
 		// A base URL without '?' must join a non-empty query with '?'.
 		JDKHttpClientImpl client = newClient("https://randomuser.me", Duration.ofSeconds(30));
-		doReturn(httpResponse(200, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
+		doReturn(httpResponse(200)).when(httpClient).send(any(HttpRequest.class), any());
 
 		Map<String, Object> query = new HashMap<>();
 		query.put("results", 1);
@@ -213,7 +213,7 @@ class JDKHttpClientImplErrorTest {
 				.apiUrl("https://randomuser.me")
 				.timeout(Duration.ofSeconds(5))
 				.build();
-		doReturn(httpResponse(200, SAMPLE_BODY)).when(httpClient).send(any(HttpRequest.class), any());
+		doReturn(httpResponse(200)).when(httpClient).send(any(HttpRequest.class), any());
 
 		client.random(RandomuserRequest.builder().build());
 

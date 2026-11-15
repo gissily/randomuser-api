@@ -16,10 +16,13 @@
 
 package xyz.opcal.tools.client;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.StringJoiner;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
@@ -102,6 +105,25 @@ public interface RandomUserClient {
 	 * @return the raw response as a map.
 	 */
 	Map<String, Object> random(ApiVersion apiVersion, Map<String, Object> queryMap);
+
+	/**
+	 * Encodes the given query parameters into a URL query string, skipping null values.
+	 *
+	 * @param queryMap the query parameters.
+	 * @return the encoded query string, or an empty string when the map is empty or all values are null.
+	 */
+	default String encodeQuery(Map<String, Object> queryMap) {
+		StringJoiner joiner = new StringJoiner("&");
+		for (Map.Entry<String, Object> entry : queryMap.entrySet()) {
+			if (entry.getValue() == null) {
+				continue;
+			}
+			joiner.add(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8)
+					+ "="
+					+ URLEncoder.encode(String.valueOf(entry.getValue()), StandardCharsets.UTF_8));
+		}
+		return joiner.toString();
+	}
 
 	/**
 	 * Configures and constructs a {@link RandomUserClient}.
