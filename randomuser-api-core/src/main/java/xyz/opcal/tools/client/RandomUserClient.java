@@ -126,6 +126,21 @@ public interface RandomUserClient {
 	}
 
 	/**
+	 * Appends the encoded query string to the given URI, joining with {@code ?} or {@code &}.
+	 *
+	 * @param uri the request URI (base URL plus endpoint path).
+	 * @param queryMap the query parameters.
+	 * @return the URI with the encoded query string appended, or the original URI when the query is empty.
+	 */
+	default String buildQueryUri(String uri, Map<String, Object> queryMap) {
+		String query = encodeQuery(queryMap);
+		if (!query.isEmpty()) {
+			uri = uri + (uri.contains("?") ? "&" : "?") + query;
+		}
+		return uri;
+	}
+
+	/**
 	 * Configures and constructs a {@link RandomUserClient}.
 	 *
 	 * <p>Resolution precedence when {@link #build()} is called:

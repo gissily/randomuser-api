@@ -164,11 +164,7 @@ public class ApacheHttpClientImpl implements RandomUserClient {
 	 * @return the deserialized response.
 	 */
 	private <T> T get(String path, Map<String, Object> queryMap, TypeReference<T> typeReference) {
-		String uri = apiUrl + path;
-		String query = encodeQuery(queryMap);
-		if (!query.isEmpty()) {
-			uri = uri + (uri.contains("?") ? "&" : "?") + query;
-		}
+		String uri = buildQueryUri(apiUrl + path, queryMap);
 		HttpGet request = new HttpGet(URI.create(uri));
 		request.setHeader(new BasicHeader("Accept", JSON_MEDIA_TYPE));
 		try {

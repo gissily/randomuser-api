@@ -98,11 +98,7 @@ public class JDKHttpClientImpl implements RandomUserClient {
 	}
 
 	private <T> T randomUser(String path, Map<String, Object> queryMap, TypeReference<T> typeReference) {
-		String uri = apiUrl + path;
-		String query = encodeQuery(queryMap);
-		if (!query.isEmpty()) {
-			uri = uri + (uri.contains("?") ? "&" : "?") + query;
-		}
+		String uri = buildQueryUri(apiUrl + path, queryMap);
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(uri))
 				.header("Accept", "application/json")
@@ -111,23 +107,33 @@ public class JDKHttpClientImpl implements RandomUserClient {
 				.build();
 		try {
 			HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
-			int status = response.statusCode();
-			byte[] body = response.body();
-			if (status == 429) {
-				log.warn("Rate limited by randomuser.me (HTTP 429); no automatic retry");
-				throw new RandomUserApiException(status, "Rate limited (HTTP 429): Too Many Requests", new String(body, StandardCharsets.UTF_8));
-			}
-			if (status < 200 || status >= 300) {
-				throw new RandomUserApiException(status, "Unexpected HTTP status " + status, new String(body, StandardCharsets.UTF_8));
-			}
+			byte[] body = checkStatus(response);
 			return objectMapper.readValue(body, typeReference);
-		} catch (RandomUserApiException e) {
-			throw e;
 		} catch (IOException e) {
 			throw new RandomUserApiException("I/O error calling " + uri, e);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new RandomUserApiException("Interrupted while calling " + uri, e);
 		}
+	}
+
+	/**
+	 * Checks the HTTP status of a response and returns its body.
+	 *
+	 * @param response the HTTP response.
+	 * @return the response body bytes.
+	 * @throws RandomUserApiException when the status is 429 or outside the 2xx range.
+	 */
+	private byte[] checkStatus(HttpResponse<byte[]> response) {
+		int status = response.statusCode();
+		byte[] body = response.body();
+		if (status == 429) {
+			log.warn("Rate limited by randomuser.me (HTTP 429); no automatic retry");
+			throw new RandomUserApiException(status, "Rate limited (HTTP 429): Too Many Requests", new String(body, StandardCharsets.UTF_8));
+		}
+		if (status < 200 || status >= 300) {
+			throw new RandomUserApiException(status, "Unexpected HTTP status " + status, new String(body, StandardCharsets.UTF_8));
+		}
+		return body;
 	}
 }
